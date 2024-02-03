@@ -5,15 +5,15 @@ import i18nConfig from "@/i18nConfig";
 
 export default async function initTraslations(
     locale,
-    namespace,
-    i18nInstace,
+    namespaces,
+    i18nInstance,
     resources
 ) {
-    i18nInstace = i18nInstace || createInstance();
-    i18nInstace.use(initReactI18next);
+    i18nInstance = i18nInstance || createInstance();
+    i18nInstance.use(initReactI18next);
 
     if (!resources) {
-        i18nInstace.use(
+        i18nInstance.use(
             resourcesToBackend(
                 (language, namespace) =>
                     import(`@/locales/${language}/${namespace}.json`)
@@ -21,19 +21,20 @@ export default async function initTraslations(
         );
     }
 
-    await i18nInstace.init({
+    await i18nInstance.init({
         lng: locale,
         resources,
         fallbackLng: i18nConfig.defaultLocale,
-        defaultNS: namespace[0],
-        fallbackNS: namespace[0],
-        ns: namespace,
+        supportedLngs: i18nConfig.locales,
+        defaultNS: namespaces[0],
+        fallbackNS: namespaces[0],
+        ns: namespaces,
         preload: resources ? [] : i18nConfig.locales
     });
 
     return {
-        i18n: i18nInstace,
-        resources: i18nInstace.services.resourceStore.data,
-        t: i18nInstace.t,
+        i18n: i18nInstance,
+        resources: i18nInstance.services.resourceStore.data,
+        t: i18nInstance.t,
     };
 }
